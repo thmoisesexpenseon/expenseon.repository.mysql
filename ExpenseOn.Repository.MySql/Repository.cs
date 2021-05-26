@@ -8,7 +8,7 @@
     using System.Threading.Tasks;
     using Dommel;
 
-    public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class
+    public abstract class Repository<TEntity, TKey> : ICommandRepository<TEntity, TKey>, ICommandRepositoryAsync<TEntity, TKey>, IQueryRepository<TEntity, TKey>, IQueryRepositoryAsync<TEntity, TKey> where TEntity : class
     {
         protected IDbConnection DbConnection { get; }
 
@@ -30,6 +30,14 @@
         public virtual bool Update(TEntity entity)
         {
             return DbConnection.Update(entity);
+        }
+
+        public virtual void UpdateMany(IEnumerable<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                DbConnection.Update(entity);
+            }
         }
 
         public virtual bool Delete(TEntity entity)
@@ -131,6 +139,14 @@
         public virtual Task<bool> UpdateAsync(TEntity entity)
         {
             return DbConnection.UpdateAsync(entity);
+        }
+
+        public virtual async Task UpdateManyAsync(IEnumerable<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                await DbConnection.UpdateAsync(entity);
+            }
         }
 
         public virtual Task<bool> DeleteAsync(TEntity entity)
