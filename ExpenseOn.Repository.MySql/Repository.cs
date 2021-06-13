@@ -113,7 +113,7 @@
         {
             var count = DbConnection.Count(predicate);
 
-            return (DbConnection.Select(predicate).Skip(skip).Take(take).ToList(), count);
+            return (DbConnection.SelectPaged(predicate, skip, take).ToList(), count);
         }
 
         public virtual TEntity FirstOrDefault()
@@ -222,7 +222,7 @@
         {
             var count = await DbConnection.CountAsync<TEntity>();
 
-            return ((await DbConnection.SelectAsync(predicate)).Skip(skip).Take(take).ToList(), count);
+            return ((await DbConnection.SelectPagedAsync(predicate, skip, take)).ToList(), count);
         }
 
         public virtual Task<TEntity> FirstOrDefaultAsync()
