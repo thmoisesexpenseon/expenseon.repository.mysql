@@ -275,7 +275,7 @@
         private TKey GetPrimaryKeyValue(TEntity entity)
         {
             if (_pkPropertyMap == null)
-                throw new InvalidOperationException($"No primary key is defined for type '{typeof(TKey).Name}'. The current operation requires a primary key to be defined using Dommel fluent mapper.");
+                throw new InvalidOperationException($"No primary key is defined for type '{typeof(TEntity).Name}'. The current operation requires a primary key to be defined using Dommel's fluent mapper.");
 
             return (TKey)Convert.ChangeType(_pkPropertyMap.PropertyInfo.GetValue(entity), typeof(TKey));
         }
