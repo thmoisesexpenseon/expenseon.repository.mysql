@@ -270,9 +270,9 @@
             return DbConnection.FirstOrDefaultAsync(predicate, transaction);
         }
 
-        private bool IsPrimaryKeyValueSet(TEntity entity) => !EqualityComparer<TKey>.Default.Equals(GetPrimaryKeyValue(entity), default);
+        protected bool IsPrimaryKeyValueSet(TEntity entity) => !EqualityComparer<TKey>.Default.Equals(GetPrimaryKeyValue(entity), default);
 
-        private TKey GetPrimaryKeyValue(TEntity entity)
+        protected TKey GetPrimaryKeyValue(TEntity entity)
         {
             if (_pkPropertyMap == null)
                 throw new InvalidOperationException($"No primary key is defined for type '{typeof(TEntity).Name}'. The current operation requires a primary key to be defined using Dommel's fluent mapper.");
