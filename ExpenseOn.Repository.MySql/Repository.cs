@@ -51,11 +51,13 @@
 
         public virtual TKey Upsert(TEntity entity, IDbTransaction transaction = null)
         {
-            if (!IsPrimaryKeyValueSet(entity)) return Insert(entity, transaction);
+            if (GetPrimaryKeyValue(entity) is { } primaryKeyValue)
+            {
+                Update(entity);
+                return primaryKeyValue;
+            }
 
-            Update(entity, transaction);
-
-            return GetPrimaryKeyValue(entity);
+            return Insert(entity);
         }
 
         public virtual void UpsertMany(IEnumerable<TEntity> entities, IDbTransaction transaction = null)
@@ -173,11 +175,13 @@
 
         public virtual async Task<TKey> UpsertAsync(TEntity entity, IDbTransaction transaction = null)
         {
-            if (!IsPrimaryKeyValueSet(entity)) return await InsertAsync(entity, transaction);
+            if (GetPrimaryKeyValue(entity) is { } primaryKeyValue)
+            {
+                await UpdateAsync(entity);
+                return primaryKeyValue;
+            }
 
-            await UpdateAsync(entity, transaction);
-
-            return GetPrimaryKeyValue(entity);
+            return await InsertAsync(entity);
         }
 
         public virtual async Task UpsertManyAsync(IEnumerable<TEntity> entities, IDbTransaction transaction = null)
