@@ -22,7 +22,7 @@
 
             if (FluentMapper.EntityMaps.TryGetValue(typeof(TEntity), out var entityMap))
             {
-                _pkPropertyMap = entityMap.PropertyMaps.Cast<DommelPropertyMap>().SingleOrDefault(t => t.Key);
+                _pkPropertyMap = entityMap.PropertyMaps.OfType<DommelPropertyMap>().SingleOrDefault(t => t.Key);
             }
         }
 
