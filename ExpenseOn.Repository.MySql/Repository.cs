@@ -53,11 +53,11 @@
         {
             if (GetPrimaryKeyValue(entity) is { } primaryKeyValue)
             {
-                Update(entity);
+                Update(entity, transaction);
                 return primaryKeyValue;
             }
 
-            return Insert(entity);
+            return Insert(entity, transaction);
         }
 
         public virtual void UpsertMany(IEnumerable<TEntity> entities, IDbTransaction transaction = null)
@@ -177,11 +177,11 @@
         {
             if (GetPrimaryKeyValue(entity) is { } primaryKeyValue)
             {
-                await UpdateAsync(entity);
+                await UpdateAsync(entity, transaction);
                 return primaryKeyValue;
             }
 
-            return await InsertAsync(entity);
+            return await InsertAsync(entity, transaction);
         }
 
         public virtual async Task UpsertManyAsync(IEnumerable<TEntity> entities, IDbTransaction transaction = null)
