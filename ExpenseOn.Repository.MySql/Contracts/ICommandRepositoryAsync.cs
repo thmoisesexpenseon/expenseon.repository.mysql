@@ -6,6 +6,11 @@
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
+    /// <summary>
+    ///     Provides asynchronous methods for executing commands against a relational database.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type that the repository operates.</typeparam>
+    /// <typeparam name="TKey">The type of the entity's primary key.</typeparam>
     public interface ICommandRepositoryAsync<TEntity, TKey> where TEntity : class
     {
         Task<TKey> InsertAsync(TEntity entity, IDbTransaction transaction = null);

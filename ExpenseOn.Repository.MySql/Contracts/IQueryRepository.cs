@@ -5,6 +5,11 @@
     using System.Data;
     using System.Linq.Expressions;
 
+    /// <summary>
+    ///     Provides methods for executing queries against a relational database.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type that the repository operates.</typeparam>
+    /// <typeparam name="TKey">The type of the entity's primary key.</typeparam>
     public interface IQueryRepository<TEntity, in TKey> where TEntity : class
     {
         bool Any(IDbTransaction transaction = null);

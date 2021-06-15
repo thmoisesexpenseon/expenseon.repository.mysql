@@ -10,7 +10,7 @@
     using Dapper.FluentMap.Dommel.Mapping;
     using Dommel;
 
-    public abstract class Repository<TEntity, TKey> : ICommandRepository<TEntity, TKey>, ICommandRepositoryAsync<TEntity, TKey>, IQueryRepository<TEntity, TKey>, IQueryRepositoryAsync<TEntity, TKey> where TEntity : class
+    public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey>, IAsyncRepository<TEntity, TKey> where TEntity : class
     {
         private readonly DommelPropertyMap _pkPropertyMap;
 
