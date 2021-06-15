@@ -259,7 +259,7 @@
 
         public virtual async Task<(IReadOnlyList<TEntity> entities, long count)> GetAsync(Expression<Func<TEntity, bool>> predicate, int skip, int take, IDbTransaction transaction = null)
         {
-            var count = await DbConnection.CountAsync<TEntity>(transaction);
+            var count = await DbConnection.CountAsync(predicate, transaction);
 
             return ((await DbConnection.SelectPagedAsync(predicate, skip, take, transaction)).ToList(), count);
         }
