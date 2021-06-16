@@ -88,7 +88,7 @@
 
         public virtual bool DeleteMany(Expression<Func<TEntity, bool>> predicate, IDbTransaction transaction = null)
         {
-            return DbConnection.DeleteMultiple(predicate) > 0;
+            return DbConnection.DeleteMultiple(predicate, transaction) > 0;
         }
 
         public virtual bool Any(IDbTransaction transaction = null)
