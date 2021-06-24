@@ -1,7 +1,7 @@
 ﻿namespace ExpenseOn.Repository.MySql
 {
     /// <summary>
-    ///     Provides asynchronous methods for executing commands and queries against a relational database.
+    ///     Provides asynchronous methods for executing commands and queries for entities of type <typeparamref name="TEntity"/> against relational databases.
     /// </summary>
     /// <remarks>
     ///     This is a convenience interface that inherits <see cref="ICommandRepositoryAsync{TEntity,TKey}"/> and <see cref="IQueryRepositoryAsync{TEntity,TKey}"/> interfaces only.

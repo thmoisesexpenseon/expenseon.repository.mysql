@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    ///     Provides asynchronous methods for executing commands against a relational database.
+    ///     Provides asynchronous methods for executing commands for entities of type <typeparamref name="TEntity"/> against relational databases.
     /// </summary>
     /// <typeparam name="TEntity">The entity type that the repository operates.</typeparam>
     /// <typeparam name="TKey">The type of the entity's primary key.</typeparam>

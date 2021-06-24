@@ -1,7 +1,7 @@
 ﻿namespace ExpenseOn.Repository.MySql
 {
     /// <summary>
-    ///     Provides methods for executing commands and queries against a relational database.
+    ///     Provides methods for executing commands and queries for entities of type <typeparamref name="TEntity"/> against relational databases.
     /// </summary>
     /// <remarks>
     ///     This is a convenience interface that inherits <see cref="ICommandRepository{TEntity,TKey}"/> and <see cref="IQueryRepository{TEntity,TKey}"/> interfaces only.

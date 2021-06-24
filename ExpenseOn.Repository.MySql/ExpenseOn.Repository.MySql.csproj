@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
     <langversion>latest</langversion>
+    <GenerateDocumentationFile Condition=" '$(Configuration)' == 'Release' ">true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/ExpenseOn/expenseon.repository.mysql</RepositoryUrl>
     <Company>ExpenseOn</Company>
     <Authors>ExpenseOn Team</Authors>

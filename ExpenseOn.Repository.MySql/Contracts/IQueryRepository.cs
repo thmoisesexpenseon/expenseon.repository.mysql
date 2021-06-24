@@ -6,7 +6,7 @@
     using System.Linq.Expressions;
 
     /// <summary>
-    ///     Provides methods for executing queries against a relational database.
+    ///     Provides methods for executing queries for entities of type <typeparamref name="TEntity"/> against relational databases.
     /// </summary>
     /// <typeparam name="TEntity">The entity type that the repository operates.</typeparam>
     /// <typeparam name="TKey">The type of the entity's primary key.</typeparam>

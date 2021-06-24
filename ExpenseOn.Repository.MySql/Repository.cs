@@ -6,13 +6,16 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using Dapper.FluentMap;
-    using Dapper.FluentMap.Dommel.Mapping;
     using Dommel;
 
+    /// <summary>
+    ///     Provides a repository pattern implementation for executing commands and queries for entities of type <typeparamref name="TEntity"/> against relational databases.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type that the repository operates.</typeparam>
+    /// <typeparam name="TKey">The type of the entity's primary key.</typeparam>
     public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey>, IAsyncRepository<TEntity, TKey> where TEntity : class
     {
-        private readonly DommelPropertyMap _pkPropertyMap;
+        private readonly ColumnPropertyInfo _pkPropertyMap;
 
         protected IDbConnection DbConnection { get; }
 
@@ -20,10 +23,7 @@
         {
             DbConnection = dbConnection;
 
-            if (FluentMapper.EntityMaps.TryGetValue(typeof(TEntity), out var entityMap))
-            {
-                _pkPropertyMap = entityMap.PropertyMaps.OfType<DommelPropertyMap>().SingleOrDefault(t => t.Key);
-            }
+            _pkPropertyMap = Resolvers.KeyProperties(typeof(TEntity)).First();
         }
 
         public virtual TKey Insert(TEntity entity, IDbTransaction transaction = null)
@@ -278,10 +278,7 @@
 
         protected TKey GetPrimaryKeyValue(TEntity entity)
         {
-            if (_pkPropertyMap == null)
-                throw new InvalidOperationException($"No primary key is defined for type '{typeof(TEntity).Name}'. The current operation requires a primary key to be defined using Dommel's fluent mapper.");
-
-            return (TKey)Convert.ChangeType(_pkPropertyMap.PropertyInfo.GetValue(entity), typeof(TKey));
+            return (TKey)Convert.ChangeType(_pkPropertyMap.Property.GetValue(entity), typeof(TKey));
         }
     }
 }
