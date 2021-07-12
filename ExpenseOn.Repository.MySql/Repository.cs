@@ -51,7 +51,7 @@
 
         public virtual TKey Upsert(TEntity entity, IDbTransaction transaction = null)
         {
-            if (GetPrimaryKeyValue(entity) is { } primaryKeyValue)
+            if (IsPrimaryKeyValueSet(entity, out var primaryKeyValue))
             {
                 Update(entity, transaction);
                 return primaryKeyValue;
@@ -64,10 +64,10 @@
         {
             if (entities.ToList() is not { Count: > 0 } listedEntities) return;
 
-            if (listedEntities.Where(t => !IsPrimaryKeyValueSet(t)).ToList() is { Count: > 0 } insertList)
+            if (listedEntities.Where(t => !IsPrimaryKeyValueSet(t, out _)).ToList() is { Count: > 0 } insertList)
                 InsertMany(insertList, transaction);
 
-            if (listedEntities.Where(IsPrimaryKeyValueSet).ToList() is { Count: > 0 } updateList)
+            if (listedEntities.Where(t => IsPrimaryKeyValueSet(t, out _)).ToList() is { Count: > 0 } updateList)
                 UpdateMany(updateList, transaction);
         }
 
@@ -175,7 +175,7 @@
 
         public virtual async Task<TKey> UpsertAsync(TEntity entity, IDbTransaction transaction = null)
         {
-            if (GetPrimaryKeyValue(entity) is { } primaryKeyValue)
+            if (IsPrimaryKeyValueSet(entity, out var primaryKeyValue))
             {
                 await UpdateAsync(entity, transaction);
                 return primaryKeyValue;
@@ -188,10 +188,10 @@
         {
             if (entities.ToList() is not { Count: > 0 } listedEntities) return;
 
-            if (listedEntities.Where(t => !IsPrimaryKeyValueSet(t)).ToList() is { Count: > 0 } insertList)
+            if (listedEntities.Where(t => !IsPrimaryKeyValueSet(t, out _)).ToList() is { Count: > 0 } insertList)
                 await InsertManyAsync(insertList, transaction);
 
-            if (listedEntities.Where(IsPrimaryKeyValueSet).ToList() is { Count: > 0 } updateList)
+            if (listedEntities.Where(t => IsPrimaryKeyValueSet(t, out _)).ToList() is { Count: > 0 } updateList)
                 await UpdateManyAsync(updateList, transaction);
         }
 
@@ -274,7 +274,11 @@
             return DbConnection.FirstOrDefaultAsync(predicate, transaction);
         }
 
-        protected bool IsPrimaryKeyValueSet(TEntity entity) => !EqualityComparer<TKey>.Default.Equals(GetPrimaryKeyValue(entity), default);
+        protected bool IsPrimaryKeyValueSet(TEntity entity, out TKey primaryKey)
+        {
+            primaryKey = GetPrimaryKeyValue(entity);
+            return !EqualityComparer<TKey>.Default.Equals(primaryKey, default);
+        }
 
         protected TKey GetPrimaryKeyValue(TEntity entity)
         {
