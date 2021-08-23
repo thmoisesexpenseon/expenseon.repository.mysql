@@ -13,17 +13,36 @@
     /// </summary>
     /// <typeparam name="TEntity">The entity type that the repository operates.</typeparam>
     /// <typeparam name="TKey">The type of the entity's primary key.</typeparam>
-    public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey>, IAsyncRepository<TEntity, TKey> where TEntity : class
+    public abstract class Repository<TEntity, TKey> : IDisposable, IRepository<TEntity, TKey>, IAsyncRepository<TEntity, TKey> where TEntity : class
     {
         private readonly ColumnPropertyInfo _pkPropertyMap;
-
         protected IDbConnection DbConnection { get; }
+        private bool isDisposed;
 
         protected Repository(IDbConnection dbConnection)
         {
             DbConnection = dbConnection;
 
             _pkPropertyMap = Resolvers.KeyProperties(typeof(TEntity)).First();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    DbConnection.Close();
+                    DbConnection.Dispose();
+                }
+                isDisposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         public virtual TKey Insert(TEntity entity, IDbTransaction transaction = null)
