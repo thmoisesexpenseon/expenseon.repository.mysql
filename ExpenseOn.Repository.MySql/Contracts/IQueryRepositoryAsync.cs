@@ -21,8 +21,8 @@
         Task<TEntity> FirstOrDefaultAsync(IDbTransaction transaction = null);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, IDbTransaction transaction = null);
         Task<IReadOnlyList<TEntity>> GetAllAsync(IDbTransaction transaction = null);
-        Task<(IReadOnlyList<TEntity> entities, long count)> GetAllAsync(int skip, int take, IDbTransaction transaction = null);
+        Task<(IReadOnlyList<TEntity> entities, long count)> GetAllAsync(int page, int pageSize, IDbTransaction transaction = null);
         Task<IReadOnlyList<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate, IDbTransaction transaction = null);
-        Task<(IReadOnlyList<TEntity> entities, long count)> GetAsync(Expression<Func<TEntity, bool>> predicate, int skip, int take, IDbTransaction transaction = null);
+        Task<(IReadOnlyList<TEntity> entities, long count)> GetAsync(Expression<Func<TEntity, bool>> predicate, int page, int pageSize, IDbTransaction transaction = null);
     }
 }

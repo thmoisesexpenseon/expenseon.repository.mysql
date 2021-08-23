@@ -13,36 +13,19 @@
     /// </summary>
     /// <typeparam name="TEntity">The entity type that the repository operates.</typeparam>
     /// <typeparam name="TKey">The type of the entity's primary key.</typeparam>
-    public abstract class Repository<TEntity, TKey> : IDisposable, IRepository<TEntity, TKey>, IAsyncRepository<TEntity, TKey> where TEntity : class
+    public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey>, IAsyncRepository<TEntity, TKey>, IDisposable where TEntity : class
     {
         private readonly ColumnPropertyInfo _pkPropertyMap;
+
         protected IDbConnection DbConnection { get; }
-        private bool isDisposed;
+
+        private bool _isDisposed;
 
         protected Repository(IDbConnection dbConnection)
         {
             DbConnection = dbConnection;
 
             _pkPropertyMap = Resolvers.KeyProperties(typeof(TEntity)).First();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!isDisposed)
-            {
-                if (disposing)
-                {
-                    DbConnection.Close();
-                    DbConnection.Dispose();
-                }
-                isDisposed = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
 
         public virtual TKey Insert(TEntity entity, IDbTransaction transaction = null)
@@ -140,11 +123,11 @@
             return DbConnection.GetAll<TEntity>(transaction).ToList();
         }
 
-        public virtual (IReadOnlyList<TEntity> entities, long count) GetAll(int skip, int take, IDbTransaction transaction = null)
+        public virtual (IReadOnlyList<TEntity> entities, long count) GetAll(int page, int pageSize, IDbTransaction transaction = null)
         {
             var count = DbConnection.Count<TEntity>(transaction);
 
-            return (DbConnection.GetPaged<TEntity>(skip, take, transaction).ToList(), count);
+            return (DbConnection.GetPaged<TEntity>(page, pageSize, transaction).ToList(), count);
         }
 
         public virtual IReadOnlyList<TEntity> Get(Expression<Func<TEntity, bool>> predicate, IDbTransaction transaction = null)
@@ -152,11 +135,11 @@
             return DbConnection.Select(predicate, transaction).ToList();
         }
 
-        public virtual (IReadOnlyList<TEntity> entities, long count) Get(Expression<Func<TEntity, bool>> predicate, int skip, int take, IDbTransaction transaction = null)
+        public virtual (IReadOnlyList<TEntity> entities, long count) Get(Expression<Func<TEntity, bool>> predicate, int page, int pageSize, IDbTransaction transaction = null)
         {
             var count = DbConnection.Count(predicate, transaction);
 
-            return (DbConnection.SelectPaged(predicate, skip, take, transaction).ToList(), count);
+            return (DbConnection.SelectPaged(predicate, page, pageSize, transaction).ToList(), count);
         }
 
         public virtual TEntity FirstOrDefault(IDbTransaction transaction = null)
@@ -264,11 +247,11 @@
             return (await DbConnection.GetAllAsync<TEntity>(transaction)).ToList();
         }
 
-        public virtual async Task<(IReadOnlyList<TEntity> entities, long count)> GetAllAsync(int skip, int take, IDbTransaction transaction = null)
+        public virtual async Task<(IReadOnlyList<TEntity> entities, long count)> GetAllAsync(int page, int pageSize, IDbTransaction transaction = null)
         {
             var count = await DbConnection.CountAsync<TEntity>(transaction);
 
-            return ((await DbConnection.GetAllAsync<TEntity>(transaction)).ToList(), count);
+            return ((await DbConnection.GetPagedAsync<TEntity>(page, pageSize, transaction)).ToList(), count);
         }
 
         public virtual async Task<IReadOnlyList<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate, IDbTransaction transaction = null)
@@ -276,11 +259,11 @@
             return (await DbConnection.SelectAsync(predicate, transaction)).ToList();
         }
 
-        public virtual async Task<(IReadOnlyList<TEntity> entities, long count)> GetAsync(Expression<Func<TEntity, bool>> predicate, int skip, int take, IDbTransaction transaction = null)
+        public virtual async Task<(IReadOnlyList<TEntity> entities, long count)> GetAsync(Expression<Func<TEntity, bool>> predicate, int page, int pageSize, IDbTransaction transaction = null)
         {
             var count = await DbConnection.CountAsync(predicate, transaction);
 
-            return ((await DbConnection.SelectPagedAsync(predicate, skip, take, transaction)).ToList(), count);
+            return ((await DbConnection.SelectPagedAsync(predicate, page, pageSize, transaction)).ToList(), count);
         }
 
         public virtual Task<TEntity> FirstOrDefaultAsync(IDbTransaction transaction = null)
@@ -302,6 +285,25 @@
         protected TKey GetPrimaryKeyValue(TEntity entity)
         {
             return (TKey)Convert.ChangeType(_pkPropertyMap.Property.GetValue(entity), typeof(TKey));
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+
+            if (disposing)
+            {
+                DbConnection.Close();
+                DbConnection.Dispose();
+            }
+
+            _isDisposed = true;
         }
     }
 }
