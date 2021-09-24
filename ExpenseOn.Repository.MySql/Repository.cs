@@ -15,7 +15,7 @@
     /// <typeparam name="TKey">The type of the entity's primary key.</typeparam>
     public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey>, IAsyncRepository<TEntity, TKey>, IDisposable where TEntity : class
     {
-        private readonly ColumnPropertyInfo _pkPropertyMap;
+        private ColumnPropertyInfo _pkPropertyMap;
 
         protected IDbConnection DbConnection { get; }
 
@@ -24,8 +24,6 @@
         protected Repository(IDbConnection dbConnection)
         {
             DbConnection = dbConnection;
-
-            _pkPropertyMap = Resolvers.KeyProperties(typeof(TEntity)).First();
         }
 
         public virtual TKey Insert(TEntity entity, IDbTransaction transaction = null)
@@ -284,6 +282,10 @@
 
         protected TKey GetPrimaryKeyValue(TEntity entity)
         {
+            if(_pkPropertyMap is null)
+            {
+                _pkPropertyMap = Resolvers.KeyProperties(typeof(TEntity)).First();
+            }
             return (TKey)Convert.ChangeType(_pkPropertyMap.Property.GetValue(entity), typeof(TKey));
         }
 
